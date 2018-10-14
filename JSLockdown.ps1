@@ -12,7 +12,7 @@
             Ensure = "Present"
             Key = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
             ValueName = "Enabled"
-            Hex = $true
+            ValueType = "Dword"
             ValueData = "0"
         }
 
@@ -22,17 +22,17 @@
             Ensure = "Present"
             Key = "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\"
             ValueName = "LmCompatibilityLevel"
-            Hex = $true
+            ValueType = "Dword"
             ValueData = "5"
         }
 
         # Force LSA Protection
-        Registry AuditLSASS
+        Registry ProtectLSASS
         {
             Ensure = "Present"
             Key = "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa"
             ValueName = "RunAsPPL"
-            Hex = $true
+            ValueType = "Dword"
             ValueData = "1"
         }
 
@@ -43,9 +43,20 @@
         }
         
         # Prevent local administrator accounts accessing network
+        # Prevents pivots from other compromised desktops
         UserRightsAssignment Denyaccesstothiscomputerfromthenetwork {
             Policy   = 'Deny_access_to_this_computer_from_the_network'
             Identity = 'S-1-5-114' # NT AUTHORITY\Local account and member of Administrators group
+        }
+
+        # Underrated - Block psexec.exe. I've seen this abused by many malware
+        # https://guyrleech.wordpress.com/2017/06/28/petya-disabling-remote-execution-of-psexec/
+        Registry BlockPsexec
+        {
+            Ensure = "Present"
+            Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\PSEXESVC.exe"
+            ValueName = "Debugger"
+            ValueData = "svchost.exe"
         }
 
     }
