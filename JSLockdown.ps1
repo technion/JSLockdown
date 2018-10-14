@@ -3,6 +3,7 @@
     # Reference guides: https://adsecurity.org/?p=3377 , https://adsecurity.org/?p=3299
 
     Import-DscResource –ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName SecurityPolicyDsc
     Node 'localhost' {
 
         # Kills legacy scripting, including .bat, .js and .vbs. Commonly used as executable downloads, to avoid a .exe download
@@ -40,5 +41,12 @@
             Ensure = 'Disable'
             Name = 'SMB1Protocol'
         }
+        
+        # Prevent local administrator accounts accessing network
+        UserRightsAssignment Denyaccesstothiscomputerfromthenetwork {
+            Policy   = 'Deny_access_to_this_computer_from_the_network'
+            Identity = 'S-1-5-114' # NT AUTHORITY\Local account and member of Administrators group
+        }
+
     }
 }
