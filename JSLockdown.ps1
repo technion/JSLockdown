@@ -4,6 +4,8 @@
 
     Import-DscResource –ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName SecurityPolicyDsc
+    Import-DscResource -ModuleName NetworkingDsc
+
     Node 'localhost' {
 
         # Kills legacy scripting, including .bat, .js and .vbs. Commonly used as executable downloads, to avoid a .exe download
@@ -59,5 +61,22 @@
             ValueData = "svchost.exe"
         }
 
+        # Disable WPAD - https://googleprojectzero.blogspot.com/2017/12/apacolypse-now-exploiting-windows-10-in_18.html?m=1
+        HostsFile HostEntry
+        {
+            HostName  = 'wpad'
+            IPAddress = '255.255.255.255'
+            Ensure    = 'Present'
+        }
+
+        # Disable LLMNR
+        Registry DisableLLMNR
+        {
+            Ensure = "Present"
+            Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"
+            ValueName = "EnableMulticast"
+            ValueType = "Dword"
+            ValueData = "0"
+        }
     }
 }

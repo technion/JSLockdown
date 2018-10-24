@@ -13,6 +13,7 @@ Script is designed for both Windows 10 and Windows 2016. Note that a key point i
 You will need a required module to build the script:
 ```
      install-module SecurityPolicyDsc
+     install-module NetworkingDsc
 ```
 Edit the .ps1 script as required, and recompile:
 ```
