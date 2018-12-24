@@ -43,6 +43,12 @@
             Ensure = 'Disable'
             Name = 'SMB1Protocol'
         }
+
+        # Remove Internet Explorer
+        WindowsOptionalFeature IE {
+            Ensure = 'Disable'
+            Name = 'Internet-Explorer-Optional-amd64'
+        }
         
         # Prevent local administrator accounts accessing network
         # Prevents pivots from other compromised desktops
